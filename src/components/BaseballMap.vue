@@ -25,7 +25,9 @@
           {{ weather.dt_txt }}：
           {{ weather.weather[0].description }}、
           気温：{{ weather.main.temp }}℃、
-          降水量：{{ getRain(weather) }} mm
+          降水量：{{ getRain(weather) }} mm、
+          <!-- judgeWeather() を呼んで観戦日和判定を表示 -->
+          <strong>{{ judgeWeather(weather) }}</strong>
         </li>
       </ul>
     </div>
@@ -63,7 +65,7 @@ export default {
   methods: {
     // 球場をクリックしたときに天気データを取得する
     async selectStadium(stadium) {
-      console.log("クリックされた球場：", stadium); // ← ★確認用
+      console.log("クリックされた球場：", stadium); // 確認用
       this.selectedStadium = stadium;
 
       const apiKey = "5e9b429c65a28ebae947e241ccfd6ee7";
@@ -72,19 +74,41 @@ export default {
       try {
         const response = await fetch(url);
         const data = await response.json();
-
-        // 最初の3日分（24時間 x 3 = 約8 * 3件）だけ取り出す
-        console.log(data.list); // ← ★確認用
+        console.log(data.list); // 確認用
+        // 最初の3日分のデータだけセット
         this.weatherList = data.list.slice(0, 8 * 3);
       } catch (error) {
         console.error("天気データの取得に失敗:", error);
       }
     },
 
-    // 降水量（mm）を安全に取り出す
+    // 降水量（mm）を安全に取り出すメソッド
     getRain(weather) {
-      // rain や rain['3h'] がない場合は 0 を返す
+      // rain['3h']がなければ0を返す
       return weather.rain && weather.rain['3h'] ? weather.rain['3h'] : 0;
+    },
+
+    // 天気データから観戦日和かどうか判定するメソッド
+    judgeWeather(weather) {
+      // 3時間ごとの降水量(mm)
+      const rain = weather.rain && weather.rain['3h'] ? weather.rain['3h'] : 0;
+      // 気温（摂氏）
+      const temp = weather.main.temp;
+      // 湿度（%）
+      const humidity = weather.main.humidity;
+      // 選択された球場の屋内外判定（selectedStadiumがnullの可能性も考慮）
+      const isOutdoor = this.selectedStadium ? this.selectedStadium.isOutdoor : false;
+
+      if (!isOutdoor) {
+        // 屋内球場の場合は雨だけ判定
+        return rain >= 1 ? "☂️ 道中、傘が必要です" : "😊 傘はいりません";
+      } else {
+        // 野外球場の場合は詳細判定
+        if (rain >= 1) return "☔ 雨で観戦つらい";
+        if (rain > 0) return "🌧️ 小雨ですが観戦可能";
+        if (temp >= 30 && humidity >= 70) return "🥵 熱中症注意！湿度も高いです";
+        return "☀️ 観戦日和です！";
+      }
     }
   }
 };
