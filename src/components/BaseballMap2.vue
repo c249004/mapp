@@ -4,16 +4,11 @@
     <img src="@/assets/japan-map.png" class="map-image" />
 
     <!-- 各球場をマーカーで表示し、クリックできるようにする -->
-   <div
-  v-for="stadium in stadiums"
-  :key="stadium.name"
-  class="marker"
-  :style="{ top: stadium.top + '%', left: stadium.left + '%' }"
-  @click="selectStadium(stadium)"
->
-  ⚾ <span class="label">{{ stadium.name }}</span>
-</div>
-
+    <div v-for="stadium in stadiums" :key="stadium.name" class="marker"
+      :style="{ top: stadium.top + 'px', left: stadium.left + 'px' }" @click="selectStadium(stadium)">
+      ⚾
+      
+    </div>
 
     <!-- 球場をクリックしたときに名前を表示 -->
     <p v-if="selectedStadium">選んだ球場：{{ selectedStadium.name }}</p>
@@ -41,71 +36,70 @@ export default {
     return {
       // 球場リスト：緯度・経度・座標・屋内外の設定
       stadiums: [
-  {
-    name: "東京ドーム",
-    lat: 35.7056,
-    lon: 139.7519,
-    top: 60.0,     // 400 / 800
-    left: 67.1,    // 410 / 772
-    isOutdoor: false
-  },
-  {
-    name: "甲子園",
-    lat: 34.721,
-    lon: 135.3612,
-    top: 69.0,     // 400 / 800
-    left: 42.0,    // 255 / 772
-    isOutdoor: true
-  },
-  {
-    name: "エスコンフィールドHOKKAIDO",
-    lat: 43.7657,
-    lon: 141.6935,
-    top: 15.75,    // 110 / 800
-    left: 70.7,    // 430 / 772
-    isOutdoor: false
-  },
-  {
-    name: "楽天モバイルパーク宮城",
-    lat: 38.2602,
-    lon: 140.9021,
-    top: 45.5,     // 300 / 800
-    left: 72.0,    // 440 / 772
-    isOutdoor: true
-  },
-  {
-    name: "ベルーナドーム",
-    lat: 35.7684,
-    lon: 139.4204,
-    top: 62.75,    // 390 / 800
-    left: 65.5,    // 390 / 772
-    isOutdoor: true
-  },
-  {
-    name: "ZOZOマリンスタジアム",
-    lat: 35.6328,
-    lon: 140.0347,
-    top: 64.75,    // 390 / 800
-    left: 70.4,    // 420 / 772
-    isOutdoor: true
-  },
-  {
-    name: "京セラドーム大阪",
-    lat: 34.6693,
-    lon: 135.4762,
-    top: 65.5,     // 420 / 800
-    left: 40.0,    // 255 / 772
-    isOutdoor: false
-  },
-  {
-    name: "みずほPayPayドーム",
-    lat: 33.595,
-    lon: 130.3626,
-    top: 70.375,   // 435 / 800
-    left: 12.3,    // 95 / 772
-    isOutdoor: false
-  }
-
+        {
+          name: "東京ドーム",
+          lat: 35.7056,//天気APIの位置指定
+          lon: 139.7519,//天気APIの位置指定
+          top: 400,//地図画像上のマーカーの位置表示のみ
+          left: 410,//地図画像上のマーカーの位置表示のみ
+          isOutdoor: false // 屋内球場
+        },
+        {
+          name: "甲子園",
+          lat: 34.721,
+          lon: 135.3612,
+          top: 400,
+          left: 255,
+          isOutdoor: true // 野外球場
+        },
+        {
+          name: "エスコンフィールドHOKKAIDO",
+          lat: 43.7657,
+          lon: 141.6935,
+          top: 110,
+          left: 430,
+          isOutdoor: false
+        },
+        {
+          name: "楽天モバイルパーク宮城",
+          lat: 38.2602,
+          lon: 140.9021,
+          top: 300,
+          left: 440,
+          isOutdoor: true
+        },
+        {
+          name: "ベルーナドーム",
+          lat: 35.7684,
+          lon: 139.4204,
+          top: 390,
+          left: 390,
+          isOutdoor: true
+        },
+        {
+          name: "ZOZOマリンスタジアム",
+          lat: 35.6328,
+          lon: 140.0347,
+          top: 390,
+          left: 420,
+          isOutdoor: true
+        },
+        {
+          name: "京セラドーム大阪",
+          lat: 34.6693,
+          lon: 135.4762,
+          top: 420,
+          left: 255,
+          isOutdoor: false
+        },
+        {
+          name: "みずほPayPayドーム",
+          lat: 33.595,
+          lon: 130.3626,
+          top: 435,
+          left: 95,
+          isOutdoor: false
+        }
 
       ],
       selectedStadium: null,     // 選択された球場
@@ -169,9 +163,8 @@ export default {
 /* マップ全体のスタイル */
 .map-wrapper {
   position: relative;
-  width: 772px;
-  height: 800px; /* 地図画像と同じに固定 */
-  margin-bottom: 150px; /* 天気情報とマーカーが重ならないよう余白追加 */
+  width: 600px;
+  /* 地図の横幅に合わせて調整 */
 }
 
 /* 地図画像を親要素にフィットさせる */
@@ -184,27 +177,7 @@ export default {
   position: absolute;
   cursor: pointer;
   font-size: 20px;
-  transform: translateY(-50%); /* ← 横方向のズレをなくす */
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  transform: translate(-50%, -50%);
+  /* 中央に表示させるため */
 }
-
-
-
-/* 球場名ラベルの表示（⚾の右側に） */
-.marker-label {
-  position: absolute;
-  left: 1.2em;  /* ボールの右に表示 */
-  top: 50%;
-  transform: translateY(-50%);
-  background: white;
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-size: 14px;
-  white-space: nowrap;
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
-}
-
 </style>
